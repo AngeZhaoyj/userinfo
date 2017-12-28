@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyj.domain.Userinfo">
+	<resultMap type="com.zyj.domain.Userinfo" id="base">
+		<!-- 主键 -->
+		<id property="userinfo_id" column="userinfo_id"/>
+		<!-- 其他属性 -->
+		<result property="coded" column="coded"/>
+		<result property="name" column="name"/>
+		<result property="name_spell" column="name_spell"/>
+		<result property="dept_id" column="dept_id"/>
+		<result property="telephone" column="telephone"/>
+		<result property="email" column="email"/>
+		<result property="state" column="state"/>
+		<result property="gmt_create" column="gmt_create"/>
+	</resultMap>
+	<sql id="baseSql">
+		userinfo_id,coded,name,name_spell,dept_id,telephone,email,state,gmt_create
+	</sql>
+	
+	<!-- 添加  -->
+	<insert id="add">
+		insert into manager_userinfo (coded,name,name_spell,dept_id,telephone,email,state,gmt_create) values (#{coded},#{name},#{name_spell},#{dept_id},#{telephone},#{email},#{state},#{gmt_create})
+	</insert>
+	
+	<!-- 修改密码 -->
+	<update id="updPassword">
+		update manager_admin
+		<set>
+			<if test="password != null">
+				password = #{password},
+			</if>
+		</set>
+		where account = #{account}
+	</update>
+	
+	<!-- 根据id获得一条数据  -->
+	<select id="get" resultMap="base">
+		select <include refid="baseSql"></include>
+		from manager_userinfo
+		where userinfo_id = #{id}
+	</select>
+	
+	<!-- 修改 --> 
+	<update id="edit">
+		update manager_userinfo 
+		<set>
+			<if test="coded != null">
+				coded = #{coded},
+			</if>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="name_spell != null">
+				name_spell = #{name_spell},
+			</if>
+			<if test="dept_id != null">
+				dept_id = #{dept_id},
+			</if>
+			<if test="telephone != null">
+				telephone = #{telephone},
+			</if>
+			<if test="email != null">
+				email = #{email},
+			</if>
+			<if test="state != null">
+				state = #{state},
+			</if>
+		</set>
+		where userinfo_id = #{userinfo_id}
+	</update>
+	
+	<!-- 删除  --> 
+	<delete id="delete">
+		delete from manager_userinfo 
+		where userinfo_id = #{userinfo_id}
+	</delete>
+	
+	<!-- 查询 -->
+	<select id="listByCondition" resultMap="base">
+		select <include refid="baseSql"></include>
+		from manager_userinfo
+		where 1 = 1 
+		<if test="coded != null">
+			and coded like '%${coded}%'
+		</if>
+		<if test="name != null">
+			and name like '%${name}%'
+		</if>
+		<if test="telephone != null">
+			and telephone like '%${telephone}%'
+		</if>
+		<if test="state != null">
+			and state = #{state}
+		</if>
+		<if test="page != null">
+			limit #{page.dbIndex} , #{page.dbNumber}
+		</if>
+	</select>
+	
+	<!-- 查询总数  -->
+	<select id="count" resultType="int">
+		select count(*)
+		from manager_userinfo
+		where 1 = 1 
+		<if test="coded != null">
+			and coded like '%${coded}%'
+		</if>
+		<if test="name != null">
+			and name like '%${name}%'
+		</if>
+		<if test="telephone != null">
+			and telephone like '%${telephone}%'
+		</if>
+		<if test="state != null">
+			and state = #{state}
+		</if>
+	</select>
+	
+	<!-- 验证编号/手机号唯一 -->
+	<select id="checkCoded" resultType="java.lang.Integer">
+		select count(*) from manager_userinfo where coded = #{coded}
+	</select>
+	<select id="checkTelephone" resultType="java.lang.Integer">
+		select count(*) from manager_userinfo where telephone = #{telephone}
+	</select>
+	
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyj.domain.Admin">
+	<resultMap type="com.zyj.domain.Admin" id="base">
+		<!-- 主键 -->
+		<id property="admin_id" column="admin_id"/>
+		<!-- 其他属性 -->
+		<result property="account" column="account"/>
+		<result property="password" column="password"/>
+	</resultMap>
+	<sql id="baseSql">
+		admin_id,account,password
+	</sql>
+	
+	<!-- 登录查询 -->
+	<select id="queryForLogin" resultMap="base">
+		select <include refid="baseSql"></include>
+		from manager_admin 
+		where account = #{account} and password = #{password}
+	</select>
+	
+	<!-- 修改  -->
+	<update id="edit">
+		update manager_admin 
+		<set>
+			<if test="password != null">
+				password = #{password},
+			</if>
+		</set>
+		where admin_id = #{id}
+	</update>
+	
+</mapper>

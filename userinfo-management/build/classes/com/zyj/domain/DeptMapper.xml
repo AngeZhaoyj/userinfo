@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyj.domain.Dept">
+	<resultMap type="com.zyj.domain.Dept" id="base">
+		<!-- 主键 -->
+		<id property="dept_id" column="dept_id"/>
+		<!-- 其他属性 -->
+		<result property="coded" column="coded"/>
+		<result property="name" column="name"/>
+	</resultMap>
+	<sql id="baseSql">
+		dept_id,coded,name
+	</sql>
+	
+	<!-- 添加  -->
+	<insert id="add">
+		insert into manager_dept (coded,name) values (#{coded},#{name})
+	</insert>
+	
+	<!-- 查看 -->
+	<select id="list" resultMap="base">
+		select <include refid="baseSql"></include>
+		from manager_dept
+	</select>
+	
+	<!-- 根据id获得一条数据  -->
+	<select id="get" resultMap="base">
+		select <include refid="baseSql"></include>
+		from manager_dept
+		where dept_id = #{dept_id}
+	</select>
+	
+	<!-- 修改  -->
+	<update id="edit">
+		update manager_dept 
+		<set>
+			<if test="coded != null">
+				coded = #{coded},
+			</if>
+			<if test="name != null">
+				name = #{name},
+			</if>
+		</set>
+		where dept_id = #{dept_id}
+	</update>
+	
+	<!-- 删除  -->
+	<delete id="delete">
+		delete from manager_dept where dept_id = #{dept_id}
+	</delete>
+	
+	<!-- 查询 -->
+	<select id="listByCondition" resultMap="base">
+		select <include refid="baseSql"></include>
+		from manager_dept
+		where 1 = 1 
+		<if test="coded != null">
+			and coded like '%${coded}%'
+		</if>
+		<if test="name != null">
+			and name like '%${name}%'
+		</if>
+		<if test="page != null">
+			limit #{page.dbIndex} , #{page.dbNumber}
+		</if>
+	</select>
+		
+	<!-- 查询总数 -->
+	<select id="count" resultType="int">
+		select count(*)
+		from manager_dept
+		where 1 = 1 
+		<if test="coded != null">
+			and coded like '%${coded}%'
+		</if>
+		<if test="name != null">
+			and name like '%${name}%'
+		</if>
+	</select>
+		
+</mapper>
